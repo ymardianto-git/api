@@ -3,10 +3,8 @@
 namespace App\Exceptions;
 
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Exceptions\ExceptionTrait;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -15,6 +13,8 @@ class Handler extends ExceptionHandler
      *
      * @var array
      */
+
+    use ExceptionTrait;
     protected $dontReport = [
         //
     ];
@@ -51,19 +51,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        
-        
-        if($request->expectsJson()){
-            if($exception instanceof ModelNotFoundException){
-                return response()->json(['error'=>'Model not found'], Response::HTTP_NOT_FOUND);
-            }
-            
-            if($exception instanceof NotFoundHttpException){
-                return response()->json(['error'=>'URL is not valid'], Response::HTTP_NOT_FOUND);
-            }
-            
-        } 
-        
+
+        if ($request->expectsJson()) {
+            return $this->apiException($request, $exception);
+        }
+
         return parent::render($request, $exception);
     }
 }
