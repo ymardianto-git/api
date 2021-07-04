@@ -11,7 +11,7 @@ use App\Http\Resources\Product\ProductCollection;
 
 class ProductController extends Controller
 {
-    
+
     public function __construct()
     {
         return $this->middleware('auth:api')->except('index', 'show');
@@ -51,9 +51,9 @@ class ProductController extends Controller
         $product->price = $request->price;
         $product->discount = $request->discount;
         $product->save();
-        
+
         return response([
-           'data'=> new ProductResource($product)
+            'data' => new ProductResource($product)
         ], Response::HTTP_CREATED);
     }
 
@@ -91,11 +91,10 @@ class ProductController extends Controller
         $request['detail'] = $request->description;
         unset($request['description']);
         $product->update($request->all());
-        
+
         return response([
-            'data'=> new ProductResource($product)
-         ], Response::HTTP_CREATED);
-        
+            'data' => new ProductResource($product)
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -106,6 +105,9 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return response([
+            'message' => 'Product has been deleted successfully'
+        ], Response::HTTP_OK);
     }
 }
